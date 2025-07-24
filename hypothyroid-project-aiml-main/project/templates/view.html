@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stored Patient Data</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>Stored Patient Data</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Age</th>
+            <th>Sex</th>
+            <th>On Thyroxine</th>
+            <th>Sick</th>
+            <th>Pregnant</th>
+            <th>Goitre</th>
+            <th>Tumor</th>
+        </tr>
+        {% for row in data %}
+        <tr>
+            {% for item in row %}
+            <td>{{ item }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

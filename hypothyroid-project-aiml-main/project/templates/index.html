@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hypothyroid Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .radio-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+
+       button {
+    width: 100%;
+    background-color: #b8beb8ab;
+    color: rgb(17, 15, 15); /* Added missing semicolon */
+    padding: 10px; /* Fixed incorrect syntax */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+        button:hover {
+            background-color:#b8beb8ab;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Hypothyroid Prediction</h2>
+        <form action="/" method="POST">
+            <label>Age:</label>
+            <input type="number" name="age" required>
+
+            <label>Sex:</label>
+            <select name="sex">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="others">Others</option>
+            </select>
+
+            <label>On Thyroxine:</label>
+            <div class="radio-group">
+                <input type="radio" name="on_thyroxine" value="t" required> True 
+                <input type="radio" name="on_thyroxine" value="f" required> False 
+            </div>
+
+            <label>Sick:</label>
+            <div class="radio-group">
+                <input type="radio" name="sick" value="t" required> Yes 
+                <input type="radio" name="sick" value="f" required> No 
+            </div>
+
+            <label>Pregnant:</label>
+            <div class="radio-group">
+                <input type="radio" name="pregnant" value="t" required> Yes 
+                <input type="radio" name="pregnant" value="f" required> No 
+            </div>
+
+            <label>Goitre:</label>
+            <div class="radio-group">
+                <input type="radio" name="goitre" value="t" required> Yes 
+                <input type="radio" name="goitre" value="f" required> No 
+            </div>
+
+            <label>Tumor:</label>
+            <div class="radio-group">
+                <input type="radio" name="tumor" value="t" required> Yes 
+                <input type="radio" name="tumor" value="f" required> No 
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result</title>
+
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        table { margin: 20px auto; border-collapse: collapse; width: 60%; }
+        th, td { border: 1px solid black; padding: 10px; }
+        th { background-color: #f4f4f4; }
+        .highlight { background-color: yellow; font-weight: bold; }
+        
+        .chatbot-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+            text-align: left;
+        }
+        .chatbot-header { display: flex; justify-content: space-between; }
+        .close-btn { cursor: pointer; font-size: 18px; color: red; }
+        .chat-box { height: 200px; overflow-y: auto; border: 1px solid gray; padding: 10px; }
+
+        h2 {
+            color: green;
+        }
+      ul.thyroid-resources {
+        list-style-type: none; /* Removes bullet points */
+        padding: 0; /* Removes default padding */
+    }
+    ul.thyroid-resources li {
+        margin: 5px 0; /* Adds spacing between items */
+    }
+    ul.thyroid-resources a {
+        text-decoration: underline; /* Always underlined */
+        color: #007bff;
+        font-weight: bold;
+    }
+    ul.thyroid-resources a:hover {
+        text-decoration: underline;
+        color: #0056b3;
+    }
+
+
+
+        
+    </style>
+</head>
+<body>
+    <h1>Prediction Result</h1>
+    <p>The predicted output is: <strong>{{ prediction }}</strong> in hypothyroid</p>
+
+    <h2>Model Performance</h2>
+    <table>
+        <tr>
+            <th>Model</th>
+            <th>Accuracy</th>
+            <th>Precision</th>
+            <th>F1 Score</th>
+        </tr>
+        {% for result in results %}
+        <tr {% if result["model"] == best_model %} class="highlight" {% endif %}>
+            <td>{{ result["model"] }}</td>
+            <td>{{ "%.2f"|format(result["accuracy"] * 100) }}%</td>
+            <td>{{ "%.2f"|format(result["precision"] * 100) }}%</td>
+            <td>{{ "%.2f"|format(result["f1_score"] * 100) }}%</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Accuracy Comparison</h2>
+    <img src="{{ url_for('static', filename='accuracy_chart.png') }}" alt="Model Accuracy Chart">
+    
+    <p><strong>Best Model:</strong> {{ best_model }} (Highest F1 Score)</p>
+
+    <!-- Button to open chatbot -->
+    <button onclick="openChatbot()">Chat with Chatbot</button>
+
+    <!-- Chatbot Modal -->
+    <div id="chatbotModal" class="chatbot-modal">
+        <div class="chatbot-header">
+            <h3>Chatbot</h3>
+            <span class="close-btn" onclick="closeChatbot()">✖</span>
+        </div>
+        <div class="chat-box" id="chatBox">
+            <p><strong>Bot:</strong> Hello! Ask me anything about hypothyroidism.</p>
+        </div>
+        <input type="text" id="userMessage" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <div>
+        <h2>References for Thyroid Patients</h2>
+        <ul class="thyroid-resources">
+            <li><a href="https://www.thyroid.org/" target="_blank">American Thyroid Association</a></li>
+            <li><a href="https://www.endocrine.org/patient-engagement/endocrine-library/thyroid-disorders" target="_blank">Endocrine Society - Thyroid Disorders</a>
+            <li><a href="https://www.mayoclinic.org/diseases-conditions/thyroid-disease" target="_blank">Mayo Clinic - Thyroid Disease</a></li>
+            <li><a href="https://medlineplus.gov/thyroiddiseases.html" target="_blank">MedlinePlus - Thyroid Diseases</a></li>
+            <li><a href="https://www.cdc.gov/nceh/features/thyroidawareness.html" target="_blank">CDC - Thyroid Awareness</a></li>
+        </ul>
+    </div>
+
+    <script>
+        function openChatbot() {
+            document.getElementById("chatbotModal").style.display = "block";
+        }
+
+        function closeChatbot() {
+            document.getElementById("chatbotModal").style.display = "none";
+        }
+
+        function sendMessage() {
+            let userMessage = document.getElementById("userMessage").value;
+            let chatBox = document.getElementById("chatBox");
+
+            if (userMessage.trim() === "") return;
+
+            // Show user message
+            chatBox.innerHTML += `<p><strong>You:</strong> ${userMessage}</p>`;
+
+            // Send to Flask chatbot
+            fetch("/chatbot", {
+                method: "POST",
+                body: new URLSearchParams({ message: userMessage }),
+                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                let botMessage = data.response;
+                chatBox.innerHTML += `<p><strong>Bot:</strong> ${botMessage}</p>`;
+                speak(botMessage);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+
+            document.getElementById("userMessage").value = "";
+        }
+
+        function speak(text) {
+            let speech = new SpeechSynthesisUtterance();
+            speech.text = text;
+            speech.lang = "en-US";
+            speech.volume = 1;
+            speech.rate = 1;
+            speech.pitch = 1;
+            window.speechSynthesis.speak(speech);
+        }
+    </script>
+
+    <a href="{{ url_for('view_data') }}" target="_blank">
+        <button style="padding: 10px 20px; font-size: 16px; cursor: pointer;">View Stored Data</button>
+    </a>
+
+    <h2>Confusion Matrices</h2>
+    <img src="{{ url_for('static', filename='confusion_matrix.png') }}" alt="Confusion Matrices">
+
+    <h2>Model Performance</h2>
+    <img src="{{ url_for('static', filename='performance_graph.png') }}" alt="Precision, Recall, F1-Score Graph">
+</body>
+</html>
